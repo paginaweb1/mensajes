@@ -1,2 +1,77 @@
-<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>La Silla Vacía</title> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> <style> body{ margin:0; font-family: Arial, sans-serif; background:#0b1c2c; color:white; } /* SPLASH */ #splash{ position:fixed; width:100%; height:100%; background:#0b1c2c; display:flex; justify-content:center; align-items:center; z-index:9999; animation:fadeOut 1.5s ease 3s forwards; } #splash img{ width:160px; animation:zoom 2s ease; } @keyframes zoom{ 0%{transform:scale(0.5); opacity:0;} 100%{transform:scale(1); opacity:1;} } @keyframes fadeOut{ to{opacity:0; visibility:hidden;} } /* CONTENIDO */ .container{ padding:15px; opacity:0; animation:show 1s ease 3.2s forwards; } @keyframes show{ to{opacity:1;} } .title{ text-align:center; font-size:28px; margin-bottom:10px; font-weight:bold; } /* UBICACION */ .location{ display:flex; justify-content:center; margin:10px auto; padding:12px 20px; border-radius:14px; text-decoration:none; font-size:14px; font-weight:bold; color:#fff; background:linear-gradient(145deg,#1a1a1a,#d4af37); animation:goldGlow 3s infinite alternate; } @keyframes goldGlow{ 0%{box-shadow:0 0 5px #000;} 100%{box-shadow:0 0 15px #d4af37;} } .invite-main{ text-align:center; margin-bottom:8px; font-size:18px; font-weight:bold; color:#f5d27a; } /* FRASE NUEVA */ .frase{ text-align:center; font-size:14px; margin-bottom:20px; color:#ddd; padding:0 10px; font-style:italic; } /* GRID */ .grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; } @media(max-width:900px){ .grid{grid-template-columns:repeat(2,1fr);} } @media(max-width:500px){ .grid{grid-template-columns:1fr;} } /* CARD */ .card{ border-radius:15px; overflow:hidden; position:relative; box-shadow:0 8px 20px rgba(0,0,0,0.4); } .card img{ width:100%; height:100%; object-fit:cover; } /* TITULOS (NO SE COMPARTEN) */ .titulo{ position:absolute; top:0; left:0; width:100%; padding:8px; text-align:center; font-size:13px; font-weight:bold; background:rgba(0,0,0,0.55); } /* SHARE */ .share-btn{ position:absolute; bottom:10px; right:10px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; } .share-btn i{ font-size:22px; color:white; opacity:0.9; transition:0.3s; } .share-btn:hover i{ color:#d4af37; transform:scale(1.15); } </style> </head> <body> <div id="splash"> <img src="logocasaroca.webp"> </div> <div class="container"> <div class="title">¡ UN LLAMADO DE LA IGLESIA A IMPACTAR !</div> <a class="location" href="https://maps.google.com/?q=Cl+58+27-32+Casa+Roca" target="_blank"> 📍 Cl. 58 # 27-32 Casa Roca </a> <p class="invite-main">Te invitamos a mi casa</p> <p class="frase">«Nadie es tan fuerte como todos nosotros juntos, porque en nuestra unión habita la presencia misma de Dios»</p> <div class="grid" id="posts"></div> </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> <script> const imagenes = [ "1.png","2.png","3.png","4.png","5.png", "6.png","7.png","8.png","9.png","10.png" ]; const titulos = [ "Para quien no ha vuelto", "Para el que cambió de dirección", "Para el nuevo", "Para un momento difícil", "Para el que está desanimado", "Para el que está avergonzado y con culpa", "Para el que cree que no necesita a Dios", "Para el que tiene problemas familiares", "Para el que lucha con malos hábitos", "Para quien es cabeza de familia" ]; /* COMPARTIR SIN TITULO */ async function compartir(btn, index){ let card = btn.closest(".card"); let titulo = card.querySelector(".titulo"); /* ocultar titulo */ titulo.style.display = "none"; const canvas = await html2canvas(card); /* restaurar */ titulo.style.display = "block"; canvas.toBlob(blob => { const file = new File([blob], post_${index}.png, { type: "image/png" }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: "La Silla Vacía", text: "Te invito a la iglesia Casa Roca 🙌" }); } else { let link = document.createElement("a"); link.href = canvas.toDataURL(); link.download = post_${index}.png; link.click(); } }); } const contenedor = document.getElementById("posts"); imagenes.forEach((img, i) => { let card = document.createElement("div"); card.className = "card"; card.innerHTML = <div class="titulo">${titulos[i]}</div> <img src="${img}"> <div class="share-btn" onclick="compartir(this, ${i+1})"> <i class="fa-regular fa-share-from-square"></i> </div> ; contenedor.appendChild(card); }); </script> </body> </html>
+async function compartir(btn, index){
 
+let card = btn.closest(".card");
+let titulo = card.querySelector(".titulo");
+
+/* ocultar titulo */
+titulo.style.display = "none";
+
+/* crear contenedor tipo flyer */
+let flyer = document.createElement("div");
+flyer.style.width = "600px";
+flyer.style.padding = "20px";
+flyer.style.background = "#0b1c2c";
+flyer.style.display = "flex";
+flyer.style.flexDirection = "column";
+flyer.style.alignItems = "center";
+flyer.style.borderRadius = "20px";
+
+/* LOGO */
+let logo = document.createElement("img");
+logo.src = "logocasaroca.png";
+logo.style.width = "120px";
+logo.style.marginBottom = "15px";
+
+/* imagen del post */
+let imagen = card.querySelector("img").cloneNode();
+imagen.style.width = "100%";
+imagen.style.borderRadius = "15px";
+
+/* texto abajo */
+let texto = document.createElement("p");
+texto.innerText = "Te invito a la iglesia Casa Roca 🙌";
+texto.style.color = "#f5d27a";
+texto.style.marginTop = "15px";
+texto.style.textAlign = "center";
+texto.style.fontWeight = "bold";
+
+/* armar flyer */
+flyer.appendChild(logo);
+flyer.appendChild(imagen);
+flyer.appendChild(texto);
+
+/* agregar temporal al DOM */
+document.body.appendChild(flyer);
+
+/* capturar */
+const canvas = await html2canvas(flyer, {
+backgroundColor: null,
+scale: 2,
+useCORS: true
+});
+
+/* eliminar flyer del DOM */
+document.body.removeChild(flyer);
+
+/* restaurar titulo */
+titulo.style.display = "block";
+
+canvas.toBlob(blob => {
+
+const file = new File([blob], `post_${index}.png`, { type: "image/png" });
+
+if (navigator.canShare && navigator.canShare({ files: [file] })) {
+navigator.share({
+files: [file],
+title: "La Silla Vacía",
+text: "Te invito a la iglesia Casa Roca 🙌"
+});
+} else {
+let link = document.createElement("a");
+link.href = canvas.toDataURL();
+link.download = `post_${index}.png`;
+link.click();
+}
+
+});
+}
