@@ -29,7 +29,7 @@ animation:fadeOut 1.5s ease 3s forwards;
 }
 
 #splash img{
-width:1000px;
+width:100%;
 animation:zoom 2s ease;
 display:block;
 }
@@ -89,6 +89,7 @@ font-weight:bold;
 color:#f5d27a;
 }
 
+/* FRASE */
 .frase{
 text-align:center;
 font-size:14px;
@@ -129,15 +130,29 @@ background:transparent !important;
 display:block;
 }
 
-/* TITULOS */
-.titulo{
+/* MENSAJE NUMERO (nuevo) */
+.mensaje-numero{
 position:absolute;
 top:0;
 left:0;
 width:100%;
+padding:6px;
+text-align:center;
+font-size:14px;
+font-weight:bold;
+background:rgba(212,175,55,0.85);
+color:#000;
+}
+
+/* TITULO */
+.titulo{
+position:absolute;
+top:28px; /* 🔥 baja el título para dejar espacio arriba */
+left:0;
+width:100%;
 padding:8px;
 text-align:center;
-font-size:13px;
+font-size:17px;
 font-weight:bold;
 background:rgba(0,0,0,0.55);
 }
@@ -181,10 +196,10 @@ transform:scale(1.15);
 <div class="title">¡ UN LLAMADO DE LA IGLESIA A IMPACTAR !</div>
 
 <a class="location" href="https://maps.google.com/?q=Cl+58+27-32+Casa+Roca" target="_blank">
-📍 Cl. 58 # 27-32 Casa Roca
+📍 Cl. 58 # 27-32 Casa Sobre la Roca
 </a>
 
-<p class="invite-main">Te invitamos a mi casa</p>
+<p class="invite-main">Mateo: 28  19-20</p>
 
 <p class="frase">«Nadie es tan fuerte como todos nosotros juntos, porque en nuestra unión habita la presencia misma de Dios»</p>
 
@@ -215,60 +230,22 @@ const titulos = [
 ];
 
 async function compartir(btn, index){
-
 let card = btn.closest(".card");
 let titulo = card.querySelector(".titulo");
+let numero = card.querySelector(".mensaje-numero");
 
 titulo.style.display = "none";
+numero.style.display = "none";
 
-/* CREAR FLYER */
-let flyer = document.createElement("div");
-flyer.style.width = "600px";
-flyer.style.padding = "20px";
-flyer.style.background = "#0b1c2c";
-flyer.style.display = "flex";
-flyer.style.flexDirection = "column";
-flyer.style.alignItems = "center";
-flyer.style.borderRadius = "20px";
-
-/* LOGO */
-let logo = document.createElement("img");
-logo.src = "logocasaroca.png";
-logo.style.width = "120px";
-logo.style.marginBottom = "15px";
-
-/* IMAGEN */
-let imagen = card.querySelector("img").cloneNode();
-imagen.style.width = "100%";
-imagen.style.borderRadius = "15px";
-
-/* TEXTO */
-let texto = document.createElement("p");
-texto.innerText = "Te invito a la iglesia Casa Roca 🙌";
-texto.style.color = "#f5d27a";
-texto.style.marginTop = "15px";
-texto.style.textAlign = "center";
-texto.style.fontWeight = "bold";
-
-/* ARMAR */
-flyer.appendChild(logo);
-flyer.appendChild(imagen);
-flyer.appendChild(texto);
-
-document.body.appendChild(flyer);
-
-/* CAPTURA SIN FONDO BLANCO */
-const canvas = await html2canvas(flyer, {
+const canvas = await html2canvas(card, {
 backgroundColor: null,
 scale: 2,
 useCORS: true
 });
 
-document.body.removeChild(flyer);
-
 titulo.style.display = "block";
+numero.style.display = "block";
 
-/* COMPARTIR */
 canvas.toBlob(blob => {
 
 const file = new File([blob], `post_${index}.png`, { type: "image/png" });
@@ -277,7 +254,7 @@ if (navigator.canShare && navigator.canShare({ files: [file] })) {
 navigator.share({
 files: [file],
 title: "La Silla Vacía",
-text: "Te invito a la iglesia Casa Roca 🙌"
+text: "Te invito a la iglesia Casa sobre la Roca 🙌"
 });
 } else {
 let link = document.createElement("a");
@@ -297,6 +274,7 @@ let card = document.createElement("div");
 card.className = "card";
 
 card.innerHTML = `
+<div class="mensaje-numero">Mensaje ${i+1}</div>
 <div class="titulo">${titulos[i]}</div>
 <img src="${img}">
 <div class="share-btn" onclick="compartir(this, ${i+1})">
